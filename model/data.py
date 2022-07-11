@@ -8,13 +8,16 @@ from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader, Dataset
 from torch import from_numpy
 from sklearn.utils import shuffle
-from numpy import swapaxes, float32, asarray
+from numpy import float32, asarray
 from PIL import Image
 
-DATA_DIR = Path('./data/images').resolve()
-LABELS_DIR = Path('./data/labels.csv').resolve()
+DATA_DIR = Path(__file__).parent/'../data/images'
+LABELS_DIR = Path(__file__).parent/'../data/labels.csv'
 
-categories = { # need to be -1
+RANDOM_STATE = 112
+
+# categories in data CSV are 1-5 so need to be converted by -1 in further works
+categories = {  
     1: 'cargo',
     2: 'navy',
     3: 'carrier',
@@ -38,7 +41,6 @@ class ShipDataset(Dataset):
         img = Image.open(path).resize((32, 32), resample=Image.Resampling.BILINEAR)
         img = img.convert(mode='L')
         np_img = asarray(img, dtype=float32) /255
-        # np_img = swapaxes(np_img, 0, -1)
         tens = from_numpy(np_img)
         return tens, label
 
@@ -52,7 +54,7 @@ class ShipDataModule(LightningDataModule):
 
     def prepare_data(self):
         df = pd.read_csv(LABELS_DIR)
-        shuffled = shuffle(df, random_state=112)
+        shuffled = shuffle(df, random_state=RANDOM_STATE)
 
         num_files = len(shuffled)
         split_train_valid = num_files - int(num_files*(self.split[0]+self.split[1]))
