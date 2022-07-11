@@ -12,13 +12,11 @@ from pytorch_lightning import LightningModule
 from torchmetrics import MetricCollection, Accuracy, F1Score, Recall, Precision
 from model.simple_arch import SimpleArkNet
 
-LR = 1e-3
-
 
 class LitModel(LightningModule):
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, lr, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.lr = LR
+        self.lr = lr
         self.num_classes = 5
         self.architecture = SimpleArkNet(5)
         self.loss_func = CrossEntropyLoss()

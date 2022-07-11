@@ -27,9 +27,10 @@ categories = {
 
 
 class ShipDataset(Dataset):
-    def __init__(self, file_data: Tuple):
+    def __init__(self, file_data: Tuple, img_size: int):
         self.file_paths = [DATA_DIR/path for path in file_data[0]]
         self.labels = [label for label in file_data[1]]
+        self.img_size = img_size
         
     def __len__(self):
         return len(self.file_paths)
@@ -38,7 +39,7 @@ class ShipDataset(Dataset):
         path = self.file_paths[idx]
         label = self.labels[idx] - 1
 
-        img = Image.open(path).resize((32, 32), resample=Image.Resampling.BILINEAR)
+        img = Image.open(path).resize((self.img_size, self.img_size), resample=Image.Resampling.BILINEAR)
         img = img.convert(mode='L')
         np_img = asarray(img, dtype=float32) /255
         tens = from_numpy(np_img)
@@ -46,11 +47,12 @@ class ShipDataset(Dataset):
 
 
 class ShipDataModule(LightningDataModule):
-    def __init__(self, split: Tuple[float], bs: int):
+    def __init__(self, split: Tuple[float], bs: int, img_size: int):
         super().__init__()
         self.split = split
         self.bs = bs
         self.num_workers = 4
+        self.img_size = img_size
 
     def prepare_data(self):
         df = pd.read_csv(LABELS_DIR)
@@ -68,9 +70,9 @@ class ShipDataModule(LightningDataModule):
         self.valid_list = (X[split_valid_test:], y[split_valid_test:])
 
     def setup(self, stage: Optional[str] = None):
-        self.train_dataset = ShipDataset(self.train_list)
-        self.valid_dataset = ShipDataset(self.valid_list)
-        self.test_dataset = ShipDataset(self.test_list)
+        self.train_dataset = ShipDataset(self.train_list, self.img_size)
+        self.valid_dataset = ShipDataset(self.valid_list, self.img_size)
+        self.test_dataset = ShipDataset(self.test_list, self.img_size)
 
     def train_dataloader(self):
         return DataLoader(self.train_dataset, batch_size=self.bs, num_workers=self.num_workers)
