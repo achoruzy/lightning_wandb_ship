@@ -4,9 +4,9 @@
 import torch.nn as nn
 
 
-class ArkNet(nn.Module):
+class SimpleArkNet(nn.Module):
     def __init__(self, num_classes):
-        super(ArkNet, self).__init__()
+        super(SimpleArkNet, self).__init__()
         self.num_classes = num_classes
         self.hidden_dim = 34
         self.activation = nn.ReLU()

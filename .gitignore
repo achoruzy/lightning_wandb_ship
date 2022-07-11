@@ -1,6 +1,9 @@
 data/
 wandb/
 artifacts/
+notebks/
 
 __pycache__/
 .venv/
+model.egg-info/
+Ships_wandb_course/
