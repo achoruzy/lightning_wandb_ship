@@ -11,7 +11,7 @@ from torch.optim import Adam
 from pytorch_lightning import LightningModule
 from torchmetrics import MetricCollection, Accuracy, F1Score
 from torchvision.models import resnet18, alexnet
-from simple_arch import ArkNet
+from simple_arch import SimpleArkNet
 
 LR = 1e-3
 
@@ -21,7 +21,7 @@ class LitModel(LightningModule):
         super().__init__(*args, **kwargs)
         self.lr = LR
         self.num_classes = 5
-        self.architecture = ArkNet(5)
+        self.architecture = SimpleArkNet(5)
         self.loss_func = CrossEntropyLoss()
         self.optimizer = Adam
         self.post_transforms = Sigmoid()
