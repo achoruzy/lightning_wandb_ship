@@ -1,0 +1,15 @@
+program: model/train.py
+method: random
+project: Ships_wandb_course
+metric:
+  name: valid_F1Score
+  goal: maximize
+parameters:
+  bs:
+    values: [4, 6, 8]
+  img_size:
+    value: 32
+  lr:
+    distribution: 'log_uniform_values'
+    min: 1e-5
+    max: 1e-2
