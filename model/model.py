@@ -10,7 +10,8 @@ from torch.nn import CrossEntropyLoss, Sigmoid
 from torch.optim import Adam
 from pytorch_lightning import LightningModule
 from torchmetrics import MetricCollection, Accuracy, F1Score, Recall, Precision
-from model.simple_arch import SimpleArkNet
+
+from simple_arch import SimpleArkNet
 
 
 class LitModel(LightningModule):

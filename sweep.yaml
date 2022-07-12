@@ -1,14 +1,14 @@
-program: train.py
+program: model/train.py
 method: random
 project: Ships_wandb_course
 metric:
-  name: f1_score
+  name: valid_F1Score
   goal: maximize
 parameters:
   bs:
-    value: 16
+    values: [4, 6, 8]
   img_size:
-    values: [256, 512]
+    value: 32
   lr:
     distribution: 'log_uniform_values'
     min: 1e-5

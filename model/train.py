@@ -11,9 +11,10 @@ from pytorch_lightning import LightningDataModule, LightningModule, Trainer
 from pytorch_lightning.callbacks import Callback, EarlyStopping, ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
 from ml_collections import config_dict
+import wandb
 
-from model.data import ShipDataModule
-from model.model import LitModel
+from data import ShipDataModule
+from model import LitModel
 
 
 EXPERIMENT_NAME = f'ship_classification_{datetime.now()}'
@@ -59,35 +60,37 @@ def train(datamodule: LightningDataModule,
     return trainer
         
 
-def main(test: bool = False,
+def main(cfg,
+         test: bool = False,
          verbose: bool = False,
          save_torch: bool = False,
          offline_log: bool = True):
-    
-    datamodule = ShipDataModule(split=SPLIT, bs=train_cfg.bs, img_size=train_cfg.img_size)
-    model = LitModel(lr=train_cfg.lr)
+    with wandb.init(config=dict(cfg)):
+        cfg = wandb.config
+        datamodule = ShipDataModule(split=SPLIT, bs=cfg.bs, img_size=cfg.img_size)
+        model = LitModel(lr=cfg.lr)
 
-    logger = WandbLogger(project='Ships_wandb_course', name=EXPERIMENT_NAME, offline=offline_log)
-    
-    callbacks = [
-        #EarlyStopping('valid_F1Score', min_delta=0.001, patience=2),
-    ]
-    if save_torch:
-        checkpoint_clbk = ModelCheckpoint(dirpath=SAVE_PATH, filename=FILE_NAME,
-                                          monitor='valid_F1Score', save_top_k=1, mode='max')
-        callbacks.append(checkpoint_clbk)
-        best_model = checkpoint_clbk.best_model_path
-        print(f'Training session saved to {best_model}')
-    
-    trainer = train(datamodule, model, logger, callbacks)
+        logger = WandbLogger(project='Ships_wandb_course', name=EXPERIMENT_NAME, offline=offline_log)
+        
+        callbacks = [
+            #EarlyStopping('valid_F1Score', min_delta=0.001, patience=2),
+        ]
+        if save_torch:
+            checkpoint_clbk = ModelCheckpoint(dirpath=SAVE_PATH, filename=FILE_NAME,
+                                            monitor='valid_F1Score', save_top_k=1, mode='max')
+            callbacks.append(checkpoint_clbk)
+            best_model = checkpoint_clbk.best_model_path
+            print(f'Training session saved to {best_model}')
+        
+        trainer = train(datamodule, model, logger, callbacks)
 
-    if test:
-        trainer.test(ckpt_path="best", datamodule=datamodule)
-    
-    if verbose:
-        print(trainer.logged_metrics)
+        if test:
+            trainer.test(ckpt_path="best", datamodule=datamodule)
+        
+        if verbose:
+            print(trainer.logged_metrics)
     
     
 if __name__ == '__main__':
     train_cfg.update(vars(parse_args()))
-    main(test=True, verbose=True, save_torch=True, offline_log=True)
+    main(train_cfg, test=False, verbose=True, save_torch=True, offline_log=True)
