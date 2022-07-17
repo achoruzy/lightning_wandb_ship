@@ -25,9 +25,11 @@ class SimpleArkNet(nn.Module):
             nn.ReLU()
             )
 
+        self.gap = nn.AdaptiveAvgPool2d(2)
+
         self.linear_out = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(1024, 32),
+            nn.Linear(256, 32),
             nn.ReLU(),
             nn.Linear(32, self.num_classes)
             )
@@ -39,9 +41,10 @@ class SimpleArkNet(nn.Module):
         x = x.unsqueeze(1)
         x = self.layer0(x)
         x = self.layer1(x)
+        x = self.gap(x)
         out = self.linear_out(x)
         return out
 
 if __name__ == '__name__':
     arch = SimpleArkNet(5, 1)
-    print(summary(arch))
+    print(summary(arch, (1, 38, 38)))
