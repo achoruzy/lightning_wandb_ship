@@ -1,4 +1,9 @@
-program: model/train.py
+program: sc/subsystems/classifier/train.py
+command:
+- ${env}
+- python3
+- ${program}
+- ${args}
 method: random
 project: Ships_wandb_course
 metric:
