@@ -13,8 +13,8 @@ from pytorch_lightning.loggers import WandbLogger
 from ml_collections import config_dict
 import wandb
 
-from data import ShipDataModule
-from model import LitModel
+from sc.subsystems.classifier.data import ShipDataModule
+from sc.subsystems.classifier.model import LitModel
 
 
 EXPERIMENT_NAME = f'ship_classification_{datetime.now()}'
@@ -24,13 +24,13 @@ GPUS = 0
 NUM_WORKERS = 8
 SPLIT = (0.1, 0.1)
 
-SAVE_PATH = Path(__file__).parent/'artifacts'
-FILE_NAME = 'model'
+SAVE_PATH = Path(__file__).parent/'../../artifacts'
+FILE_NAME = 'classification_model'
 
 train_cfg = config_dict.ConfigDict()
 train_cfg.img_size = 32
-train_cfg.bs = 4
-train_cfg.epochs = 4
+train_cfg.bs = 8
+train_cfg.epochs = 3
 train_cfg.lr = 1e-3
 
 
@@ -61,7 +61,7 @@ def train(datamodule: LightningDataModule,
         
 
 def main(cfg,
-         test: bool = False,
+         with_evaluation: bool = False,
          verbose: bool = False,
          save_torch: bool = False,
          offline_log: bool = True):
@@ -84,7 +84,7 @@ def main(cfg,
         
         trainer = train(datamodule, model, logger, callbacks)
 
-        if test:
+        if with_evaluation:
             trainer.test(ckpt_path="best", datamodule=datamodule)
         
         if verbose:
@@ -93,4 +93,4 @@ def main(cfg,
     
 if __name__ == '__main__':
     train_cfg.update(vars(parse_args()))
-    main(train_cfg, test=False, verbose=True, save_torch=True, offline_log=True)
+    main(train_cfg, with_evaluation=False, verbose=True, save_torch=False, offline_log=True)

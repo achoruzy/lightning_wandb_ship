@@ -5,5 +5,5 @@ notebks/
 
 __pycache__/
 .venv/
-model.egg-info/
+sc.egg-info/
 Ships_wandb_course/
