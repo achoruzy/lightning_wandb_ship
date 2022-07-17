@@ -1,4 +1,9 @@
-program: model/train.py
+program: sc/subsystems/classifier/train.py
+command:
+- ${env}
+- python3
+- ${program}
+- ${args}
 method: random
 project: Ships_wandb_course
 metric:
@@ -6,9 +11,9 @@ metric:
   goal: maximize
 parameters:
   bs:
-    values: [4, 6, 8]
+    values: [8, 12, 16]
   img_size:
-    value: 32
+    values: [32, 38, 44]
   lr:
     distribution: 'log_uniform_values'
     min: 1e-5

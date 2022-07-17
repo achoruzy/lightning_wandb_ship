@@ -6,13 +6,13 @@ from pathlib import Path
 import pandas as pd
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader, Dataset
-from torch import from_numpy
+from torch import from_numpy, unsqueeze
 from sklearn.utils import shuffle
 from numpy import float32, asarray
 from PIL import Image
 
-DATA_DIR = Path(__file__).parent/'../data/images'
-LABELS_DIR = Path(__file__).parent/'../data/labels.csv'
+DATA_DIR = Path(__file__).parent/'../../../data/images'
+LABELS_DIR = Path(__file__).parent/'../../../data/labels.csv'
 
 RANDOM_STATE = 112
 
