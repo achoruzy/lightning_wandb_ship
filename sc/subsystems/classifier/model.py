@@ -6,12 +6,12 @@ from pathlib import Path
 
 from numpy import array
 from torch import no_grad, Tensor, argmax, float32
-from torch.nn import CrossEntropyLoss, Sigmoid
+from torch.nn import CrossEntropyLoss, Sigmoid, Conv2d
 from torch.optim import Adam
 from pytorch_lightning import LightningModule
 from torchmetrics import MetricCollection, Accuracy, F1Score, Recall, Precision
 
-from simple_arch import SimpleArkNet
+from sc.subsystems.classifier.simple_arch import SimpleArkNet
 
 
 class LitModel(LightningModule):
@@ -19,7 +19,9 @@ class LitModel(LightningModule):
         super().__init__(*args, **kwargs)
         self.lr = lr
         self.num_classes = 5
-        self.architecture = SimpleArkNet(5)
+
+        self.architecture = SimpleArkNet(5, 1)
+
         self.loss_func = CrossEntropyLoss()
         self.optimizer = Adam
         self.post_transforms = Sigmoid()

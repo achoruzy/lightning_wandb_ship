@@ -4,5 +4,5 @@
 
 from setuptools import setup, find_packages
 
-setup(name="model", version='0.0.0',
-      packages=['model'])
+setup(name="sc", version='0.0.0',
+      packages=['sc'])
