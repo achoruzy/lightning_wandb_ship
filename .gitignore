@@ -7,3 +7,4 @@ __pycache__/
 .venv/
 sc.egg-info/
 Ships_wandb_course/
+Lightning_WandB/
